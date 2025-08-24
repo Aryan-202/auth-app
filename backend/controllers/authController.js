@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/user.js';
 import crypto from 'crypto';
-import {sendPasswordResetEmail, sendVerificationEmail} from '../config/nodemailer.js';
+import transporter from '../config/nodemailer.js';
 
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -26,9 +26,7 @@ export const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        //email things
-        const emailVerificationToken = crypto.randomBytes(20).toString('hex');
-        const emailVerificationTokenExpireAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+       
 
 
         // store user in db
@@ -36,12 +34,9 @@ export const register = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            emailVerificationToken,
-            emailVerificationTokenExpireAt
         });
         await user.save();
 
-        await sendVerificationEmail(email, emailVerificationToken);
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
@@ -51,6 +46,16 @@ export const register = async (req, res) => {
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 1 week
         });
+        //sending welcome email
+        const mainOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: 'Welcome to Our App',
+            text: `Hello ${name},\n\nWelcome to our app! We're glad to have you on board.\nYour account has been created successfully with email id: ${email}\n\nBest regards,\nThe Team`
+        }
+
+        await transporter.sendMail(mainOptions);
+
         res.status(201).json({
             success: true,
             message: "User registered successfully",
@@ -147,170 +152,14 @@ export const logout = async (req, res) => {
     }
 }
 
-export const isAuthenticated = (req, res, next) => {
-    const token = req.cookies.token || '';
-
-    if (!token) {
-        return res.status(401).json({
+//send verification otp
+export const sendVerifyOtp = async (req, res) => {
+    try{
+        const {userId} = req.body;
+    }catch(error){
+        res.json({
             success: false,
-            message: "Unauthorized"
-        });
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (error) {
-        return res.status(401).json({
-            success: false,
-            message: "Unauthorized"
-        });
+            message: error.message
+        })
     }
 }
-
-
-export const verifyEmail = async (req, res) => { // Added email verification function
-    try {
-        const { token } = req.params;
-        
-        const user = await userModel.findOne({
-            emailVerificationToken: token,
-            emailVerificationExpires: { $gt: Date.now() }
-        });
-        
-        if (!user) {
-            return res.status(400).json({ 
-                success: false,
-                message: "Invalid or expired verification token" 
-            });
-        }
-        
-        user.isVerified = true;
-        user.emailVerificationToken = undefined;
-        user.emailVerificationExpires = undefined;
-        await user.save();
-        
-        res.status(200).json({ 
-            success: true,
-            message: "Email verified successfully" 
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            success: false,
-            message: "Error verifying email", 
-            error: error.message 
-        });
-    }
-};
-
-export const requestPasswordReset = async (req, res) => {
-    try {
-        const { email } = req.body;
-        
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ 
-                success: false,
-                message: "User with this email does not exist" 
-            });
-        }
-        
-        // Generate reset token
-        const resetToken = crypto.randomBytes(20).toString('hex');
-        user.passwordResetToken = resetToken;
-        user.passwordResetExpires = Date.now() + 60 * 60 * 1000; // 1 hour
-        await user.save();
-        
-        // Send reset email
-        await sendPasswordResetEmail(email, resetToken);
-        
-        res.status(200).json({ 
-            success: true,
-            message: "Password reset email sent" 
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            success: false,
-            message: "Error requesting password reset", 
-            error: error.message 
-        });
-    }
-};
-
-export const resetPassword = async (req, res) => { // Added password reset function
-    try {
-        const { token } = req.params;
-        const { password } = req.body;
-        
-        const user = await userModel.findOne({
-            passwordResetToken: token,
-            passwordResetExpires: { $gt: Date.now() }
-        });
-        
-        if (!user) {
-            return res.status(400).json({ 
-                success: false,
-                message: "Invalid or expired reset token" 
-            });
-        }
-        
-        // Update password
-        user.password = await bcrypt.hash(password, 10); // Added password hashing
-        user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
-        await user.save();
-        
-        res.status(200).json({ 
-            success: true,
-            message: "Password reset successfully" 
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            success: false,
-            message: "Error resetting password", 
-            error: error.message 
-        });
-    }
-};
-
-export const resendVerificationEmail = async (req, res) => { // Added optional resend function
-    try {
-        const { email } = req.body;
-        
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ 
-                success: false,
-                message: "User not found" 
-            });
-        }
-        
-        if (user.isVerified) {
-            return res.status(400).json({ 
-                success: false,
-                message: "Email is already verified" 
-            });
-        }
-        
-        // Generate new verification token
-        const emailVerificationToken = crypto.randomBytes(20).toString('hex');
-        user.emailVerificationToken = emailVerificationToken;
-        user.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000;
-        await user.save();
-        
-        // Send verification email
-        await sendVerificationEmail(email, emailVerificationToken);
-        
-        res.status(200).json({ 
-            success: true,
-            message: "Verification email sent" 
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            success: false,
-            message: "Error resending verification email", 
-            error: error.message 
-        });
-    }
-};
