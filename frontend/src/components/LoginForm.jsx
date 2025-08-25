@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Eye, EyeOff, Mail, Lock, Github } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
+
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -11,6 +13,8 @@ const LoginForm = () => {
     // Add your login logic here
     console.log('Login attempt:', { email, password })
   }
+
+  const navigateSignup = useNavigate();
 
   return (
     <div className="w-full max-w-md">
@@ -113,9 +117,12 @@ const LoginForm = () => {
 
         <p className="mt-8 text-center text-sm text-white/70">
           Don't have an account?{' '}
-          <a href="#" className="text-cyan-400 hover:text-cyan-300 font-semibold">
+          <button 
+            onClick={() => navigateSignup('/signup')}
+            className="text-cyan-400 hover:text-cyan-300 font-semibold"
+          >
             Sign up
-          </a>
+          </button>
         </p>
       </div>
     </div>

@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import EmailVerify from './pages/EmailVerify'
 import ResetPassword from './pages/ResetPassword'
+import SignUp from './pages/SignUp'
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/email-verify" element={<EmailVerify />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
