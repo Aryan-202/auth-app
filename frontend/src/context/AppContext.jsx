@@ -7,12 +7,14 @@ export const AppContextProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
     const [isLoggedin, setIsLoggedin] = useState(false);
     const [userData, setUserData] = useState(null);
+    
 
 
     const value = {
         backendUrl,
         isLoggedin, setIsLoggedin,
-        userData, setUserData
+        userData, setUserData,
+    
     }
 
 

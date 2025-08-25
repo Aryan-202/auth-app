@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Eye, EyeOff, Mail, Lock, User, Github, Check } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { AppContext } from '../context/AppContext';
+import axios from 'axios';
 
 const SignUpForm = () => {
-
+  const { backendUrl, setIsLoggedin } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false)
@@ -15,7 +19,7 @@ const SignUpForm = () => {
     password: '',
     confirmPassword: '',
     agreeToTerms: false
-  })
+  });
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -25,12 +29,51 @@ const SignUpForm = () => {
     }))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Add your sign up logic here
-    console.log('Sign up attempt:', formData)
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!passwordsMatch) {
+    toast.error('Passwords do not match');
+    return;
+  }
+  
+  if (!formData.agreeToTerms) {
+    toast.error('Please agree to the terms and conditions');
+    return;
   }
 
+  setIsLoading(true);
+
+  try {
+    axios.defaults.withCredentials = true;
+    
+    // Combine first and last name
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    
+    // Ensure the URL is properly formatted
+    const apiUrl = `${backendUrl}${backendUrl.endsWith('/') ? '' : '/'}api/auth/register`;
+    console.log('API URL:', apiUrl); // Debug the final URL
+    
+    const { data } = await axios.post(apiUrl, {
+      name: fullName,
+      email: formData.email,
+      password: formData.password
+    });
+
+    if (data.success) {
+      setIsLoggedin(true);
+      toast.success('Account created successfully!');
+      navigate('/');
+    } else {
+      toast.error(data.message || 'Sign up failed');
+    }
+  } catch (error) {
+    console.error('Sign up error:', error);
+    toast.error(error.response?.data?.message || 'Sign up failed. Please try again.');
+  } finally {
+    setIsLoading(false);
+  }
+}
   const passwordsMatch = formData.password === formData.confirmPassword && formData.confirmPassword !== ''
 
   return (

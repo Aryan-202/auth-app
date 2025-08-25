@@ -14,36 +14,39 @@ const LoginForm = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
 
   const handleSubmit = async (e) => {
-    try {
-      e.preventDefault();
-      axios.defaults.withCredentials = true;
-      if(state === 'Sign Up') {
-        // Sign Up logic
-        const {data} = await axios.post(backendUrl + 'api/auth/register', { name, email, password });
-        if(data.success) {
-          setIsLoggedin(true);
-          navigate('/');
-        }else {
-          toast.error(data.message || 'Sign Up failed');
-        }
-      } else {
-       const {data} = await axios.post(backendUrl + 'api/auth/login', { email, password });
-        if(data.success) {
-            setIsLoggedin(true);
-            navigate('/');
-          }else {
-            toast.error(data.message || 'Login failed');
-          }
-      }
-    } catch (error) {
-      toast.error(error.response?.data.message || 'Login failed');
+  try {
+    e.preventDefault();
+    
+    // Ensure backendUrl is properly formatted
+    const baseUrl = backendUrl.endsWith('/') ? backendUrl : backendUrl + '/';
+    
+    axios.defaults.withCredentials = true;
+    const {data} = await axios.post(`${baseUrl}api/auth/login`, { 
+      email, 
+      password 
+    });
+    
+    if(data.success) {
+      setIsLoggedin(true);
+      navigate('/');
+      toast.success(data.message || 'Login successful');
+    } else {
+      toast.error(data.message || 'Login failed');
+    }
+  } catch (error) {
+    console.error('Login error details:', error);
+    if (error.response) {
+      toast.error(error.response.data?.message || 'Login failed');
+    } else {
+      toast.error('Cannot connect to server. Check if backend is running.');
     }
   }
+}
 
-  const navigateSignup = useNavigate();
   const navigate = useNavigate();
 
   return (
@@ -148,7 +151,7 @@ const LoginForm = () => {
         <p className="mt-8 text-center text-sm text-white/70">
           Don't have an account?{' '}
           <button 
-            onClick={() => navigateSignup('/signup')}
+            onClick={() => navigate('/signup')}
             className="text-cyan-400 hover:text-cyan-300 font-semibold"
           >
             Sign up
