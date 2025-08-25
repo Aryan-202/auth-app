@@ -1,12 +1,13 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import Header from '../components/Header'
+import HeroSection from '../components/HeroSection'
+import BackgroundElements from '../components/BackgroundElements'
+import LandingPage from '../components/LandingPage'
 
 const Home = () => {
   return (
     <div className='min-h-screen'>
-      <Navbar />
-      <Header />
+      <LandingPage />
     </div>
   )
 }

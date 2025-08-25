@@ -4,4 +4,4 @@ npm init
 npm install express cors dotenv nodemon jsonwebtoken mongoose bcryptjs nodemailer cookie-parser
 
 for frontend
-npm install axios react-router-dom react-toastify
+npm install axios react-router-dom react-toastify lucide-react
