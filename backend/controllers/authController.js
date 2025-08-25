@@ -88,12 +88,12 @@ export const login = async (req, res) => {
             });
         }
 
-        if (!user.isVerified) {
-            return res.status(400).json({
-                success: false,
-                message: "Email not verified"
-            });
-        }
+        // if (!user.isVerified) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "Email not verified"
+        //     });
+        // }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
@@ -244,7 +244,6 @@ export const verifyEmail = async (req, res) => {
 export const isAuthenticated = (req, res) => {
     try {
         
-        console.log("✅ Function isAuthenticated is being called!");
         return res.json({
             success: true,
             message: "User is authenticated"
