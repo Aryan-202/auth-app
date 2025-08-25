@@ -8,10 +8,9 @@ import { toast } from 'react-toastify';
 
 const LoginForm = () => {
 
-  const {backendUrl, setIsLoggedin} = useContext(AppContext);
+  const {backendUrl, setIsLoggedin, getUserData} = useContext(AppContext);
 
-  const [state, setState] = useState('Sign Up');
-  const [name, setName] = useState('');
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -32,6 +31,7 @@ const LoginForm = () => {
     
     if(data.success) {
       setIsLoggedin(true);
+      getUserData();
       navigate('/');
       toast.success(data.message || 'Login successful');
     } else {
