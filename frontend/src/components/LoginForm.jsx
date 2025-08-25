@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 const LoginForm = () => {
+
+
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -15,6 +17,7 @@ const LoginForm = () => {
   }
 
   const navigateSignup = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <div className="w-full max-w-md">
@@ -77,7 +80,7 @@ const LoginForm = () => {
               />
               <span className="ml-2 text-sm text-white/70">Remember me</span>
             </label>
-            <a href="#" className="text-sm text-cyan-400 hover:text-cyan-300">
+            <a onClick={() => navigate('/reset-password')} className="text-sm text-cyan-400 hover:text-cyan-300">
               Forgot password?
             </a>
           </div>
