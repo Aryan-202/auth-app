@@ -1,19 +1,46 @@
-import React, { useState } from 'react'
-import { Eye, EyeOff, Mail, Lock, Github } from 'lucide-react'
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useState } from 'react'
+import { Eye, EyeOff, Mail, Lock, Github, Axis3DIcon } from 'lucide-react'
+import { data, useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 const LoginForm = () => {
 
+  const {backendUrl, setIsLoggedin} = useContext(AppContext);
 
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [state, setState] = useState('Sign Up');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Add your login logic here
-    console.log('Login attempt:', { email, password })
+
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      axios.defaults.withCredentials = true;
+      if(state === 'Sign Up') {
+        // Sign Up logic
+        const {data} = await axios.post(backendUrl + 'api/auth/register', { name, email, password });
+        if(data.success) {
+          setIsLoggedin(true);
+          navigate('/');
+        }else {
+          toast.error(data.message || 'Sign Up failed');
+        }
+      } else {
+       const {data} = await axios.post(backendUrl + 'api/auth/login', { email, password });
+        if(data.success) {
+            setIsLoggedin(true);
+            navigate('/');
+          }else {
+            toast.error(data.message || 'Login failed');
+          }
+      }
+    } catch (error) {
+      toast.error(error.response?.data.message || 'Login failed');
+    }
   }
 
   const navigateSignup = useNavigate();
