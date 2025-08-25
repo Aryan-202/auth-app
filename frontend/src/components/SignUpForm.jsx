@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import { Eye, EyeOff, Mail, Lock, User, Github, Check } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
+
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -215,12 +219,15 @@ const SignUpForm = () => {
         </div>
 
         <p className="mt-8 text-center text-sm text-white/70">
-          Already have an account?{' '}
-          <a href="#" className="text-cyan-400 hover:text-cyan-300 font-semibold">
-            Sign in
-          </a>
-        </p>
-      </div>
+        Already have an account?{' '}
+        <button 
+          onClick={() => navigate('/login')}
+          className="text-cyan-400 hover:text-cyan-300 font-semibold"
+        >
+          Sign in
+        </button>
+      </p>
+    </div>
     </div>
   )
 }
