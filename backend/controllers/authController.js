@@ -118,10 +118,7 @@ export const login = async (req, res) => {
                 email: user.email
             }
         });
-        // res.status(201).json({
-        //     success: true,
-        //     message: "User registered successfully",
-        // });
+        
 
     } catch (error) {
         res.status(500).json({
@@ -226,8 +223,8 @@ export const verifyEmail = async (req, res) => {
         }
 
         user.isAccountVerified = true;
-        user.verifyOtp = undefined;
-        user.verifyOtpExpireAt = undefined;
+        user.verifyOtp = '';
+        user.verifyOtpExpireAt = 0;
 
         await user.save();
 
@@ -349,8 +346,8 @@ export const resetPassword = async (req, res) => {
         // Hash new password and update user
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
-        user.resetOtp = undefined;
-        user.resetOtpExpireAt = undefined;
+        user.resetOtp = '';
+        user.resetOtpExpireAt = 0;
 
         await user.save();
 
