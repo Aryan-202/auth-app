@@ -361,3 +361,24 @@ export const resetPassword = async (req, res) => {
         });
     }
 }
+
+
+
+// Added getUser
+export const getUser = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.userId).select('-password');
+    res.json({
+      success: true,
+      userData: {
+        name: user.name,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+}

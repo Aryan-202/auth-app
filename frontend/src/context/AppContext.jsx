@@ -1,5 +1,6 @@
 import { createContext, use, useState } from "react";
 import { toast } from "react-toastify";
+import axios from 'axios';
 
 export const AppContext = createContext();
 
@@ -9,11 +10,22 @@ export const AppContextProvider = (props) => {
     const [isLoggedin, setIsLoggedin] = useState(false);
     const [userData, setUserData] = useState(false);
 
+    const getUserData = async ()=>{
+      try {
+        const {data} = await axios.get(`${backendUrl}/api/auth/get-user`);
+        data.success ? setUserData(data.userData) : toast.error(data.message || 'Failed to fetch user data');
+      } catch (error) {
+        toast.error(error.message || 'Failed to fetch user data');
+      }
+    }
+
     const getAuthState = async () => {
         try {
-            const { data } = await axios.get(`${backendUrl}/api/auth/-s-auth`, { withCredentials: true });
-            setIsLoggedin(data.isLoggedin);
-            setUserData(data.user || false);
+            const { data } = await axios.get(`${backendUrl}/api/auth/is-auth`);
+            if (data?.success) {
+                setIsLoggedin(true);
+                getUserData(data?.user);
+            }
         } catch (error) {
             toast.error(error.message || 'Failed to fetch auth state');
         }
@@ -24,7 +36,7 @@ export const AppContextProvider = (props) => {
         backendUrl,
         isLoggedin, setIsLoggedin,
         userData, setUserData,
-    
+        getUserData
     }
 
 

@@ -1,7 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Lock, ArrowRight } from 'lucide-react'
+import { AppContext } from '../context/AppContext';
+
+
 
 const HeroSection = () => {
+
+  const {userData} = useContext(AppContext);
+
   return (
     <div className="relative z-10 px-6 pt-20 pb-32">
       <div className="max-w-7xl mx-auto text-center">
@@ -12,8 +18,8 @@ const HeroSection = () => {
         </div>
         
         <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          Secure Your
-          <span className="bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent"> Digital Life</span>
+        {userData?.name ? `Secure ${userData.name}'s` : 'Secure Your'}
+        <span className="bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent"> Digital Life</span>
         </h1>
         
         <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed">
