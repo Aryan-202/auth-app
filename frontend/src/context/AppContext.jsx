@@ -1,4 +1,4 @@
-import { createContext, use, useState } from "react";
+import { createContext, use, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from 'axios';
 
@@ -8,7 +8,7 @@ export const AppContextProvider = (props) => {
     
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
     const [isLoggedin, setIsLoggedin] = useState(false);
-    const [userData, setUserData] = useState(false);
+    const [userData, setUserData] = useState(null);
 
     const getUserData = async ()=>{
       try {
@@ -24,13 +24,16 @@ export const AppContextProvider = (props) => {
             const { data } = await axios.get(`${backendUrl}/api/auth/is-auth`);
             if (data?.success) {
                 setIsLoggedin(true);
-                getUserData(data?.user);
+                getUserData();
             }
         } catch (error) {
             toast.error(error.message || 'Failed to fetch auth state');
         }
     }
 
+    useEffect(() => {
+        getAuthState();
+    }, []);
 
     const value = {
         backendUrl,
