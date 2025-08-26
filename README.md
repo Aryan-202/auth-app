@@ -84,10 +84,44 @@ A full-stack authentication application built with React for the frontend and No
 
 ```
 ---
+## 🚀 Installation & Setup
 
+### ✅ Prerequisites
+- [Node.js](https://nodejs.org/) (v14 or higher)
+- npm or yarn
+- [MongoDB](https://www.mongodb.com/) (or your preferred database)
 
+---
 
+## 🛠 Backend Setup
 
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Initialize and install dependencies:
+   ```bash
+   npm init
+   npm install express cors dotenv nodemon jsonwebtoken mongoose bcryptjs nodemailer cookie-parser
+   ```
+3. Start the backend server:
+   ```bash
+     npm run server
+   ```
+   # Server will run on 👉 http://localhost:5000
 
+## 💻 Frontend Setup
 
-
+1. Navigate to the backend directory:
+   ```bash
+   cd frontend
+   ```
+2. Initialize and install dependencies:
+   ```bash
+   npm install
+   npm install axios react-router-dom react-toastify lucide-react
+   ```
+3. Start the backend server:
+   ```bash
+     npm run dev
+   ```
