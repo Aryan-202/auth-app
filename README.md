@@ -108,7 +108,7 @@ A full-stack authentication application built with React for the frontend and No
    ```bash
      npm run server
    ```
-   ### Server will run on 👉 http://localhost:5000
+   ### Server will run on 👉 http://localhost:3000
 
 ## 💻 Frontend Setup
 
@@ -125,3 +125,4 @@ A full-stack authentication application built with React for the frontend and No
    ```bash
      npm run dev
    ```
+   
