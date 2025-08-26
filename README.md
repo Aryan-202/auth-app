@@ -32,3 +32,62 @@ A full-stack authentication application built with React for the frontend and No
 - CORS for cross-origin requests
 
 ## Project Structure
+```
+  auth-app/
+├── frontend/                 # React application
+│   ├── public/
+│   │   ├── index.html
+│   │   └── favicon.ico
+│   ├── src/
+│   │   ├── components/       # Reusable UI components
+│   │   │   ├── BackgroundElements.js
+│   │   │   ├── Header.js
+│   │   │   ├── HeroSection.js
+│   │   │   ├── LandingPage.js
+│   │   │   ├── LoginBackgroundElements.js
+│   │   │   ├── LoginForm.js
+│   │   │   ├── LoginHero.js
+│   │   │   ├── LoginNavbar.js
+│   │   │   ├── LoginPage.js
+│   │   │   ├── Navbar.js
+│   │   │   ├── SignUpBackgroundElements.js
+│   │   │   ├── SignUpForm.js
+│   │   │   ├── SignUpHero.js
+│   │   │   ├── SignUpNavbar.js
+│   │   │   └── SignUpPage.js
+│   │   ├── context/          # React Context for auth state
+│   │   │   └── AppContext.js
+│   │   ├── App.js
+│   │   ├── App.css
+│   │   └── index.js
+│   ├── package.json
+│   └── README.md
+├── backend/                  # Node.js/Express application
+│   ├── config/
+│   │   └── database.js       # Database connection configuration
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   └── userController.js
+│   ├── middleware/
+│   │   ├── auth.js           # JWT verification middleware
+│   │   └── validation.js     # Input validation middleware
+│   ├── models/
+│   │   └── User.js           # User model/schema
+│   ├── routes/
+│   │   ├── auth.js           # Authentication routes
+│   │   └── user.js           # User routes
+│   ├── package.json
+│   ├── server.js             # Entry point
+│   └── .env
+├── node_modules/             # Node.js dependencies
+└── requirements.txt          # Project requirements
+
+```
+---
+
+
+
+
+
+
+
